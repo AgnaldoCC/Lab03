@@ -1,0 +1,21 @@
+#botoesPerfil{
+  width: 235px;
+  height: auto;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.modal-body{
+  position: relative;
+}
+
+#imagemModal{
+  width: 235px;
+  height: 340px;
+  margin-bottom: 10px;
+  margin-left: 30%;
+}
+
+#formModal{
+  margin-bottom: 5px;
+}

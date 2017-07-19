@@ -1,0 +1,29 @@
+ul.nav li{
+  width: 20%;
+  text-align: center;
+}
+
+ul.nav li a{
+  color: #990000;
+}
+
+ul.nav li a:hover{
+  border-radius: 7px;
+  color: white;
+  background-color: #A62A2A;
+}
+
+#titulo{
+  font-family: Snell Roundhand, cursive;
+  text-align: center;
+}
+
+#sizeThumbnail{
+  width: 245px;
+  height: auto;
+}
+
+#tamanhoImagem{
+  width: 235px;
+  height: 340px;
+}

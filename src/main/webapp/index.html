@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html ng-app="seriesList">
+  <head>
+
+    <script src="js/angular.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="bootstrap/bootstrap.min.js"></script>
+    <script src="angular/controller/seriesListCtrl.js"></script>
+    <script src="angular/services/seriesAPI.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="bootstrap/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/pesquisa.css">
+    <link rel="stylesheet" type="text/css" href="css/perfil.css">
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/cadastro.css">
+    
+    <meta charset="utf-8">
+
+    <title>Controle de Séries</title>
+
+  </head>
+
+<body ng-controller="seriesController">
+
+  <ul class="nav nav-tabs">
+    <li><a data-toggle="tab" href="#cadastro">Sign Up</a></li>
+    <li><a data-toggle="tab" href="#login">Login/Logout</a></li>
+    <li><a data-toggle="tab" href="#pesquisa">Pesquisar</a></li>
+    <li class="active"><a data-toggle="tab" href="#series">Minhas séries</a></li>
+    <li><a data-toggle="tab" href="#watchlist">WatchList</a></li>
+  </ul>
+
+    <!-- Pagina Inicial-->
+
+  <div class="tab-content">
+
+      <!-- Cadastro-->
+
+    <div id="cadastro" class="tab-pane">
+      <form>
+         <div id="formulario" class="form-group">
+          <label id="nome" for="nome">Nome:</label>
+          <input type="text" class="form-control" id="nome" ng-model="user.nome">
+        </div>
+        <div id="formulario" class="form-group">
+          <label id="nome" for="email">Email:</label>
+          <input type="email" class="form-control" id="email" ng-model="user.email">
+        </div>
+        <div id="formulario" class="form-group">
+          <label id="nome" for="pwd">Senha:</label>
+          <input type="password" class="form-control" id="pwd" ng-model="user.password">
+        </div>
+        <button id="botaoCadastro" type="submit" class="btn btn-primary btn-block" ng-click="cadastro(user)">Cadastrar</button>
+      </form>
+    </div>
+
+    <!-- Login -->
+
+    <div id="login" class="tab-pane">
+      <form>
+        <div id="formulario" class="form-group">
+          <label id="nome" for="email" ng-show="!hasLogado()">Email:</label>
+          <input type="email" class="form-control" id="email" ng-model="user.email" ng-show="!hasLogado()">
+        </div>
+        <div id="formulario" class="form-group">
+          <label id="nome" for="pwd" ng-show="!hasLogado()">Senha:</label>
+          <input type="password" class="form-control" id="pwd" ng-model="user.password" ng-show="!hasLogado()">
+        </div>
+        <button id="botaoCadastro" type="submit" class="btn btn-primary btn-block" ng-click="login(user)" ng-show="!hasLogado()">Logar</button>
+        <button id="botaoCadastro" type="submit" class="btn btn-danger btn-block" ng-click="deslogar()" ng-show="hasLogado()">Deslogar</button>
+      </form>
+    </div>
+
+
+    <div id = "pesquisa" class = "tab-pane">
+        <h3 id="titulo">{{"Pesquisar Séries"}}</h3>
+        <input id="pesquisa" class="form-control" type="text" placeholder="Digite aqui o nome da série" ng-model="nome">
+        <button type="submit" id="botaoPesquisar" class = "btn btn-primary btn-danger" ng-click="getSeries(nome); pesquisa()">Pesquisar</button>
+        <h3></h3>
+
+        <h2 ng-show="pesquisa()" id="errorMessage">Série não encontrada.</h2>
+
+      <!--Pesquisar-->
+
+      <div ng-repeat= "serie in series">
+        <div class="col-lg-4">
+            <div id="sizeThumbnail" class="thumbnail grow">
+              <img title="{{serie.Title}}" id="tamanhoImagem" ng-if="serie.Poster != 'N/A'" src={{serie.Poster}}>
+              <img title="{{serie.Title}}" id="tamanhoImagem" ng-if="serie.Poster == 'N/A'" src="http://v0.static.betalabs.com.br/wilson-591da56985027/ecommerce/belcosmeticos/img/unavailable.jpg">
+              <div id="botoes">
+                <button class="btn btn-primary btn-block" ng-click="adicionaSerie(serie)">Adicionar ao Meu Perfil</button>
+                <button class="btn btn-success btn-block" ng-click="adicionarWatchlist(serie)">Adicionar a Watchlist</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div> <!-- Fim Pesquisa -->
+
+
+    <!--Minhas Series-->
+
+    <div id="series" class="tab-pane fade in active">
+      <h2 id="titulo">Suas Séries</h2>
+      <div ng-repeat= "serie in minhasSeries" >
+      <div id="imagens" class="col-md-3">
+        <div id="sizeThumbnail" class="thumbnail grow">
+          <img title="{{serie.title}}" id="tamanhoImagem" ng-if="serie.poster != 'N/A'" src={{serie.poster}}>
+          <img title="{{serie.title}}" id="tamanhoImagem" ng-if="serie.poster == 'N/A'" src="http://v0.static.betalabs.com.br/wilson-591da56985027/ecommerce/belcosmeticos/img/unavailable.jpg">
+          <div id="botoesPerfil">
+            <ng-button class="btn btn-danger btn-block" ng-click="deletarMinhasSeries(serie)">Remover</ng-button>
+            <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#myModal{{$index}}">Sobre</button>
+          </div>
+        </div>
+      </div>
+
+        <!--Modal da série-->
+
+        <div id="myModal{{$index}}" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">{{serie.title}}</h4>
+              </div>
+
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col">
+                    <img class="img-responsive" id="imagemModal" src="{{serie.poster}}"></div>
+                </div>
+                <p><b>Sinopse:</b></p>
+                <p>{{serie.plot}}</p>
+                <p><b>Gênero:</b> {{serie.genre}}</p>
+                <p><b>Classificação etária:</b> {{serie.rated}}</p>
+                <p><b>Média IMDB:</b> {{serie.imdbRating}}</p>
+                <p ng-show="serie.nota != undefined"><b>Minha nota para esta série:</b> {{serie.nota}}</p>
+                <p ng-show="serie.ultimoEpi != undefined"><b>Último episódio assistido desta série:</b> {{serie.ultimoEpi}}</p>
+                <div id="formModal" class="input-group">
+                <input ng-model="minhaNota" class="form-control" placeholder="Adicionar nota">
+                  <div class="input-group-btn">
+                    <button type="submit" ng-click="adicionaMinhaNota(minhaNota, serie)" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus"></span></button>
+                  </div>
+                </div>
+                <div id="formModal" class ="input-group">
+                  <input ng-model="ultimoEpi" class="form-control" placeholder="Adicionar último episódio assistido">
+                  <div class="input-group-btn">
+                    <button type="submit" ng-click="adicionaUltimoEpi(ultimoEpi, serie)" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus"></span></button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div> <!--Fim Modal-->
+      </div>
+    </div> <!--Fim Minhas Series-->
+
+
+  <!-- WatchList-->
+
+  <div id="watchlist" class="tab-pane">
+    <h2 id="titulo">Sua WatchList</h2>
+    <md-list-item ng-repeat= "serie in watchList" >
+    <div id="imagens" class="col-lg-3">
+      <div id="sizeThumbnail" class="thumbnail grow">
+        <img title="{{serie.Title}}" id="tamanhoImagem" ng-if="serie.Poster != 'N/A'" src={{serie.Poster}}>
+        <img title="{{serie.Title}}" id="tamanhoImagem" ng-if="serie.Poster == 'N/A'" src="http://v0.static.betalabs.com.br/wilson-591da56985027/ecommerce/belcosmeticos/img/unavailable.jpg">
+        <div id="botoesPerfil">
+          <ng-button class="btn btn-primary btn-block" ng-click="adicionaSerie(serie)">Adicionar ao Perfil</ng-button>
+        </div>
+      </div>
+    </div>
+    </md-list-item>
+  </div> <!--Fim watchList-->
+
+  </div>
+
+</body>
+</html>
