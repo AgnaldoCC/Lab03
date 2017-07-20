@@ -4,7 +4,6 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
   $scope.minhasSeries = [];
   $scope.watchList = [];
   $scope.userLogado;
-  $scope.users = []
   $scope.pesquisou = "";
 
   $scope.getSeries = function(nome){
@@ -41,14 +40,12 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
       alert("Você precisa fazer login para adicionar séries ao seu perfil.");
     }
     if (!$scope.containsMinhasSeries(serie)){
-    console.log("rajada");
       var promise = seriesAPI.getFullSerieFromAPI(serie);
       promise.then(function(response){
         var completa = response.data;
         var convertida = converter(completa);
         $scope.minhasSeries.push(convertida);
         $scope.putInProfile(convertida);
-        console.log(convertida);
         alert(serie.Title + " adicionado(a) ao seu perfil.")
       }).catch(function(error){
         console.log(error);
@@ -165,13 +162,13 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
     };
 
     $scope.putInProfile = function(serie){
+    	console.log($scope.userLogado);
       $http({
             method: 'POST',
             url: 'http://localhost:8080/user/perfil/' + $scope.userLogado.id,
             data: serie
           }).then(function successCallback(response) {
             }, function errorCallback(response) {
-            console.log($scope.minhasSeries.length);
              console.log("Deu erro no perfil");
             });
     };
@@ -184,18 +181,6 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
         }).then(function(response) {
           alert(user.nome + " cadastrado com sucesso.");
           console.log(response.data);
-          });
-    };
-
-    var getUsers = function(){
-      $http({
-          method: 'GET',
-          url: 'http://localhost:8080/users'
-        }).then(function successCallback(response) {
-          $scope.clientes = response.data;
-          console.log(response.data);
-          }, function errorCallback(response) {
-          console.log("Deu erro");
           });
     };
 
@@ -226,14 +211,6 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
     }
     };
     
-  $scope.hasSeriesOnProfile = function(){
-      return $scope.minhasSeries.length > 0;
-    };
-    
-  $scope.hasSeriesOnWatchlist = function(){
-      return $scope.watchlist.length > 0;
-    };
-
   $scope.hasLogado = function(){
       return $scope.userLogado != null;
     };

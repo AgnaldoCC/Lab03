@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import br.com.lab3.model.Serie;
 import br.com.lab3.model.User;
@@ -17,6 +18,9 @@ import br.com.lab3.service.UserService;
 /**
  * Created by Agnaldo on 12/07/2017.
  */
+
+@RequestMapping("/user/")
+@RestController
 public class SerieController {
 
     @Autowired
@@ -25,7 +29,7 @@ public class SerieController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "perfil/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, value = "/perfil/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Serie> putProfile(@RequestBody Serie serie, @PathVariable("id") Long id) {
 
         Serie cadastrada = serieService.cadastroSerie(serie);
@@ -36,7 +40,7 @@ public class SerieController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "watchList/{serieID}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, value = "/watchList/{serieID}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Serie> putWatchlist(@RequestBody Serie serie, @PathVariable("id") Long id) {
     	
     	Serie cadastrada = serieService.cadastroSerie(serie);
@@ -46,7 +50,7 @@ public class SerieController {
         return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "removerPerfil/{id}/{id2}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/removerPerfil/{id}/{id2}")
     public ResponseEntity<String> deleteProfile(@PathVariable Long id, @PathVariable String id2) {
 
     	User encontrado = userService.getUserById(id);
@@ -56,7 +60,7 @@ public class SerieController {
 
     }
     
-    @RequestMapping(method = RequestMethod.DELETE, value ="removerWatchlist/{id}/{id2}")
+    @RequestMapping(method = RequestMethod.DELETE, value ="/removerWatchlist/{id}/{id2}")
     public ResponseEntity<String> deleteWatchList(@PathVariable Long id, @PathVariable String id2) {
 
     	User encontrado = userService.getUserById(id);
