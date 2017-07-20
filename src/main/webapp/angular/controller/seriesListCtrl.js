@@ -5,7 +5,10 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
   $scope.watchList = [];
   $scope.userLogado;
   $scope.pesquisou = "";
-
+  
+  
+  // Requisições na API do IMDB
+  
   $scope.getSeries = function(nome){
     $scope.series = [];
     $scope.pesquisou = "";
@@ -22,6 +25,99 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
     })
     return promise;
   };
+  
+  $scope.adicionaSerie = function(serie){
+		var convertida = converter(serie);
+	    if (!$scope.hasLogado()){
+	      alert("Você precisa fazer login para adicionar séries ao seu perfil.");
+	    }
+	    if (!$scope.containsMinhasSeries(serie)){
+	      var promise = seriesAPI.getFullSerieFromAPI(convertida);
+	      promise.then(function(response){
+	        var completa = response.data;
+	        var plot = completa.Plot.substring(0,220) + "...";;
+	        var add = converter(completa);
+	        add.plot = plot;
+	        $scope.minhasSeries.push(add);
+	        $scope.putInProfile(add);
+	        alert(add.title + " adicionado(a) ao seu perfil.")
+	      }).catch(function(error){
+	        console.log(error);
+	      });
+	    }else{
+	      alert("Você já adicionou " + serie.Title + " ao seu perfil.");
+	    };
+
+	    if (contains($scope.watchList, serie)){
+	      var index = $scope.watchList.indexOf(serie);
+	      $scope.watchList.splice(index, 1);
+	    }
+	  };
+	  
+	  
+	// Requisições na API Rest
+	  
+	  $scope.deleteProfile = function(serie){
+		  var s = converter(serie);
+	      $http({
+	          method: 'DELETE',
+	          url: 'http://localhost:8080/user/removerPerfil/' 
+	            + $scope.userLogado.id + "/" + s.imdbID,
+	        }).then(function (response) {
+	          });
+	    }
+
+	    $scope.putInWatchList = function(serie){
+	      $http({
+	          method: 'POST',
+	          url: 'http://localhost:8080/user/watchList/' + $scope.userLogado.id,
+	          data: serie
+	        }).then(function(response) {
+	          });
+	    };
+
+	    $scope.putInProfile = function(serie){
+	      $http({
+	            method: 'POST',
+	            url: 'http://localhost:8080/user/perfil/' + $scope.userLogado.id,
+	            data: serie
+	          }).then(function successCallback(response) {
+	            }, function errorCallback(response) {
+	             console.log("Deu erro no perfil");
+	            });
+	    };
+
+	    $scope.cadastro = function(user){
+	      $http({
+	          method: 'POST',
+	          url: 'http://localhost:8080/users',
+	          data: user  
+	        }).then(function(response) {
+	          alert(user.nome + " cadastrado com sucesso.");
+	          limparCampo("input[name = formCadastro]");
+	          });
+	    };
+
+	    $scope.login = function(user){
+	      $http({
+	            method: 'POST',
+	            url: 'http://localhost:8080/users/login',
+	            data: user 
+	          }).then(function(response) {
+	            if(response.data.nome == null){
+	              alert("Email ou senha incorretos. Tente novamente.");
+	            }else{
+	              alert("Bem vindo ao Controle de Séries.");
+	              $scope.userLogado = response.data;
+	              $scope.pegaSeries();
+	              limparCampo("input[name = formCadastro]");
+	            }
+	            }, function errorCallback(response) {
+	             console.log("Deu erro");
+	            });
+	    };
+	    
+	 //Outros Métodos
 
   var contains = function(array, serie){
     for (var i = 0; i < array.length; i++) {
@@ -34,34 +130,21 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
   $scope.containsMinhasSeries = function(serie){
     return contains($scope.minhasSeries, serie);
   };
+  
+  var limparCampo = function(campo) {
+		$(campo).val("");
+	};
 
-  $scope.adicionaSerie = function(serie){
-	var convertida = converter(serie);
-    if (!$scope.hasLogado()){
-      alert("Você precisa fazer login para adicionar séries ao seu perfil.");
+  
+  //Pega as séries do usuário e coloca no scope
+  $scope.pegaSeries = function(){
+      if($scope.userLogado.profile != undefined){
+        $scope.minhasSeries = angular.copy($scope.userLogado.profile);
+      }
+      if($scope.userLogado.watchlist != undefined){
+        $scope.watchlist = angular.copy($scope.userLogado.watchlist);
+      }
     }
-    if (!$scope.containsMinhasSeries(serie)){
-      var promise = seriesAPI.getFullSerieFromAPI(convertida);
-      promise.then(function(response){
-        var completa = response.data;
-        var plot = completa.Plot.substring(0,220) + "...";;
-        var add = converter(completa);
-        add.plot = plot;
-        $scope.minhasSeries.push(add);
-        $scope.putInProfile(add);
-        alert(serie.title + " adicionado(a) ao seu perfil.")
-      }).catch(function(error){
-        console.log(error);
-      });
-    }else{
-      alert("Você já adicionou " + serie.title + " ao seu perfil.");
-    };
-
-    if (contains($scope.watchList, serie)){
-      var index = $scope.watchList.indexOf(serie);
-      $scope.watchList.splice(index, 1);
-    }
-  };
 
   $scope.deletarMinhasSeries = function(serie){
     var index = $scope.minhasSeries.indexOf(serie);
@@ -88,27 +171,31 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
       if (!contains($scope.watchList, convertida)){
         $scope.watchList.push(convertida);
         $scope.putInWatchList(convertida);
-        alert(serie.title + " adicionada a sua WatchList")
+        alert(convertida.title + " adicionada a sua WatchList")
       }else{
-        alert("Você já adicionou " + serie.title + " a sua WatchList");
+        alert("Você já adicionou " + convertida.title + " a sua WatchList");
       }
     }
   };
 
   $scope.adicionaMinhaNota = function(minhaNota, serie){
-    serie.nota = minhaNota;
+    serie.myRating = minhaNota;
+    limparCampo("input[name = modal]");
     $scope.putInProfile(serie);
   }
 
   $scope.adicionaUltimoEpi = function(ultimoEpi, serie){
-    serie.ultimoEpi = ultimoEpi;
+    serie.lastEpisode = ultimoEpi;
+    limparCampo("input[name = modal]");
     $scope.putInProfile(serie);
   }
 
   $scope.pesquisa = function(){
     return $scope.pesquisou == "Movie not found!";
   }
-
+  
+  
+  //Converte as séries para os atributos começando com letras minúsculas
   var converter = function (serie){
     var json = {
       title: serie.Title,
@@ -120,75 +207,7 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
     return json;
   }
 
-  $scope.deleteProfile = function(serie){
-	  var s = converter(serie);
-      $http({
-          method: 'DELETE',
-          url: 'http://localhost:8080/user/removerPerfil/' 
-            + $scope.userLogado.id + "/" + s.imdbID,
-        }).then(function successCallback(response) {
-          }, function errorCallback(response) {
-           console.log("Erro!");
-          });
-    }
-
-    $scope.pegaSeries = function(){
-      if($scope.userLogado.profile != undefined){
-        $scope.minhasSeries = angular.copy($scope.userLogado.profile);
-      }
-      if($scope.userLogado.watchlist != undefined){
-        $scope.watchlist = angular.copy($scope.userLogado.watchlist);
-      }
-    }
-
-    $scope.putInWatchList = function(serie){
-      $http({
-          method: 'POST',
-          url: 'http://localhost:8080/user/watchList/' + $scope.userLogado.id,
-          data: serie
-        }).then(function(response) {
-          });
-    };
-
-    $scope.putInProfile = function(serie){
-      $http({
-            method: 'POST',
-            url: 'http://localhost:8080/user/perfil/' + $scope.userLogado.id,
-            data: serie
-          }).then(function successCallback(response) {
-            }, function errorCallback(response) {
-             console.log("Deu erro no perfil");
-            });
-    };
-
-    $scope.cadastro = function(user){
-      $http({
-          method: 'POST',
-          url: 'http://localhost:8080/users',
-          data: user  
-        }).then(function(response) {
-          alert(user.nome + " cadastrado com sucesso.");
-          console.log(response.data);
-          });
-    };
-
-    $scope.login = function(user){
-      $http({
-            method: 'POST',
-            url: 'http://localhost:8080/users/login',
-            data: user 
-          }).then(function(response) {
-            if(response.data.nome == null){
-              alert("Email ou senha incorretos. Tente novamente.");
-            }else{
-              alert("Bem vindo ao Controle de Séries.");
-              $scope.userLogado = response.data;
-              $scope.pegaSeries();
-            }
-            }, function errorCallback(response) {
-             console.log("Deu erro");
-            });
-    };
+  
 
     $scope.deslogar = function(){
     decisao = confirm("Deseja realmente deslogar?");
@@ -196,6 +215,7 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
       $scope.userLogado = null;
       $scope.minhasSeries = [];
       $scope.watchlist = [];
+      limparCampo("input[name = formCadastro]");
     }
     };
     

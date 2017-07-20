@@ -41,15 +41,15 @@
       <form>
          <div id="formulario" class="form-group">
           <label id="nome" for="nome">Nome:</label>
-          <input type="text" class="form-control" id="nome" ng-model="user.nome">
+          <input name="formCadastro" type="text" class="form-control" id="nome" ng-model="user.nome">
         </div>
         <div id="formulario" class="form-group">
           <label id="nome" for="email">Email:</label>
-          <input type="email" class="form-control" id="email" ng-model="user.email">
+          <input name="formCadastro" type="email" class="form-control" id="email" ng-model="user.email">
         </div>
         <div id="formulario" class="form-group">
           <label id="nome" for="pwd">Senha:</label>
-          <input type="password" class="form-control" id="pwd" ng-model="user.password">
+          <input name="formCadastro" type="password" class="form-control" id="pwd" ng-model="user.password">
         </div>
         <button id="botaoCadastro" type="submit" class="btn btn-primary btn-block" ng-click="cadastro(user)">Cadastrar</button>
       </form>
@@ -61,11 +61,11 @@
       <form>
         <div id="formulario" class="form-group">
           <label id="nome" for="email" ng-show="!hasLogado()">Email:</label>
-          <input type="email" class="form-control" id="email" ng-model="user.email" ng-show="!hasLogado()">
+          <input name="formCadastro" type="email" class="form-control" id="email" ng-model="user.email" ng-show="!hasLogado()">
         </div>
         <div id="formulario" class="form-group">
           <label id="nome" for="pwd" ng-show="!hasLogado()">Senha:</label>
-          <input type="password" class="form-control" id="pwd" ng-model="user.password" ng-show="!hasLogado()">
+          <input name="formCadastro" type="password" class="form-control" id="pwd" ng-model="user.password" ng-show="!hasLogado()">
         </div>
         <button id="botaoCadastro" type="submit" class="btn btn-primary btn-block" ng-click="login(user)" ng-show="!hasLogado()">Logar</button>
         <button id="botaoCadastro" type="submit" class="btn btn-danger btn-block" ng-click="deslogar()" ng-show="hasLogado()">Deslogar</button>
@@ -133,16 +133,16 @@
                 <p>{{serie.plot}}</p>
                 <p><b>Classificação etária:</b> {{serie.rated}}</p>
                 <p><b>Média IMDB:</b> {{serie.imdbRating}}</p>
-                <p ng-show="serie.nota != undefined"><b>Minha nota para esta série:</b> {{serie.nota}}</p>
-                <p ng-show="serie.ultimoEpi != undefined"><b>Último episódio assistido desta série:</b> {{serie.ultimoEpi}}</p>
+                <p ng-show="serie.myRating != undefined"><b>Minha nota para esta série:</b> {{serie.myRating}}</p>
+                <p ng-show="serie.lastEpisode != undefined"><b>Último episódio assistido desta série:</b> {{serie.lastEpisode}}</p>
                 <div id="formModal" class="input-group">
-                <input ng-model="minhaNota" class="form-control" placeholder="Adicionar nota">
+                <input name = "modal" ng-model="minhaNota" class="form-control" placeholder="Adicionar nota">
                   <div class="input-group-btn">
                     <button type="submit" ng-click="adicionaMinhaNota(minhaNota, serie)" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus"></span></button>
                   </div>
                 </div>
                 <div id="formModal" class ="input-group">
-                  <input ng-model="ultimoEpi" class="form-control" placeholder="Adicionar último episódio assistido">
+                  <input name = "modal" ng-model="ultimoEpi" class="form-control" placeholder="Adicionar último episódio assistido">
                   <div class="input-group-btn">
                     <button type="submit" ng-click="adicionaUltimoEpi(ultimoEpi, serie)" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus"></span></button>
                   </div>
