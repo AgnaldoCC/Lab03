@@ -44,6 +44,7 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
       promise.then(function(response){
         var completa = response.data;
         var convertida = converter(completa);
+        console.log(convertida);
         $scope.minhasSeries.push(convertida);
         $scope.putInProfile(convertida);
         alert(serie.Title + " adicionado(a) ao seu perfil.")
@@ -108,15 +109,14 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
 
   var converter = function (serie){
     var json = {
-      imdbRating: serie.imdbRating,
       title: serie.Title,
-      rated: serie.Rated,
-      poster: serie.Poster,
-      imdbID: serie.imdbID,
-      genre: serie.Genre,
       plot: serie.Plot,
-      nota: serie.nota,
-      ultimoEpi: serie.ultimoEpi
+      imdbRating: serie.imdbRating,
+      rated: serie.Rated,
+      myRating: serie.nota,
+      lastEpisode: serie.ultimoEpi,
+      poster: serie.Poster,
+      imdbID: serie.imdbID
     };
     return json;
   }
@@ -162,7 +162,6 @@ angular.module('seriesList', []).controller("seriesController", function($scope,
     };
 
     $scope.putInProfile = function(serie){
-    	console.log($scope.userLogado);
       $http({
             method: 'POST',
             url: 'http://localhost:8080/user/perfil/' + $scope.userLogado.id,

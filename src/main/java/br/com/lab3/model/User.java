@@ -28,10 +28,10 @@ public class User {
 	private String password;
 
 	@OneToMany
-	private List<Serie> profile;
+	private List<Serie> profile = new ArrayList<>();
 
 	@OneToMany
-	private List<Serie> watchlist;
+	private List<Serie> watchlist = new ArrayList<>();
 
 	public Long getId() {
 		return id;
@@ -82,16 +82,11 @@ public class User {
 	}
 
 	public void addWatchlist(Serie serie) {
-		if (this.watchlist == null) {
-			this.setWatchlist(new ArrayList<>());
-		}
+
 		this.watchlist.add(serie);
 	}
 
 	public void addProfile(Serie serie) {
-		if (this.profile == null) {
-			this.setProfile(new ArrayList<>());
-		}
 
 		int i = profile.indexOf(serie);
 
