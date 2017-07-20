@@ -6,6 +6,7 @@ import javax.persistence.*;
  * Created by Agnaldo on 12/07/2017.
  */
 @Entity(name = "serie")
+@Table(name = "tb_serie")
 public class Serie {
 
 	@Id

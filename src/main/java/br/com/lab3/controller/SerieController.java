@@ -25,11 +25,10 @@ public class SerieController {
 
     @Autowired
     SerieService serieService;
-    
     @Autowired
     UserService userService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/perfil/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, value = "perfil/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Serie> putProfile(@RequestBody Serie serie, @PathVariable("id") Long id) {
 
         Serie cadastrada = serieService.cadastroSerie(serie);
@@ -40,8 +39,8 @@ public class SerieController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/watchList/{serieID}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Serie> putWatchlist(@RequestBody Serie serie, @PathVariable("id") Long id) {
+    @RequestMapping(method = RequestMethod.POST, value = "watchList/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Serie> putWatchlist(@RequestBody Serie serie, @PathVariable Long id) {
     	
     	Serie cadastrada = serieService.cadastroSerie(serie);
         User cadastrado = userService.getUserById(id);
@@ -50,7 +49,7 @@ public class SerieController {
         return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/removerPerfil/{id}/{id2}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "removerPerfil/{id}/{id2}")
     public ResponseEntity<String> deleteProfile(@PathVariable Long id, @PathVariable String id2) {
 
     	User encontrado = userService.getUserById(id);
@@ -60,17 +59,4 @@ public class SerieController {
 
     }
     
-    @RequestMapping(method = RequestMethod.DELETE, value ="/removerWatchlist/{id}/{id2}")
-    public ResponseEntity<String> deleteWatchList(@PathVariable Long id, @PathVariable String id2) {
-
-    	User encontrado = userService.getUserById(id);
-		encontrado.removeWatchList(id2);
-		userService.cadastro(encontrado);
-		return new ResponseEntity<>("Serie removida com sucesso", HttpStatus.OK);
-
-    }
-    
-    
-    
-
 }

@@ -131,7 +131,6 @@
                 </div>
                 <p><b>Sinopse:</b></p>
                 <p>{{serie.plot}}</p>
-                <p><b>Gênero:</b> {{serie.genre}}</p>
                 <p><b>Classificação etária:</b> {{serie.rated}}</p>
                 <p><b>Média IMDB:</b> {{serie.imdbRating}}</p>
                 <p ng-show="serie.nota != undefined"><b>Minha nota para esta série:</b> {{serie.nota}}</p>
@@ -165,8 +164,8 @@
     <md-list-item ng-repeat= "serie in watchList" >
     <div id="imagens" class="col-lg-3">
       <div id="sizeThumbnail" class="thumbnail grow">
-        <img title="{{serie.Title}}" id="tamanhoImagem" ng-if="serie.Poster != 'N/A'" src={{serie.Poster}}>
-        <img title="{{serie.Title}}" id="tamanhoImagem" ng-if="serie.Poster == 'N/A'" src="http://v0.static.betalabs.com.br/wilson-591da56985027/ecommerce/belcosmeticos/img/unavailable.jpg">
+        <img title="{{serie.title}}" id="tamanhoImagem" ng-if="serie.poster != 'N/A'" src={{serie.poster}}>
+          <img title="{{serie.title}}" id="tamanhoImagem" ng-if="serie.poster == 'N/A'" src="http://v0.static.betalabs.com.br/wilson-591da56985027/ecommerce/belcosmeticos/img/unavailable.jpg">
         <div id="botoesPerfil">
           <ng-button class="btn btn-primary btn-block" ng-click="adicionaSerie(serie)">Adicionar ao Perfil</ng-button>
         </div>

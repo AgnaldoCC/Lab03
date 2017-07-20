@@ -11,25 +11,19 @@ import javax.persistence.*;
 
 @Entity(name = "user")
 @Table(name = "tb_user")
-
 public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
 	@Column
 	private String nome;
-
 	@Column
 	private String email;
-
 	@Column
 	private String password;
-
 	@OneToMany
 	private List<Serie> profile = new ArrayList<>();
-
 	@OneToMany
 	private List<Serie> watchlist = new ArrayList<>();
 
@@ -87,9 +81,7 @@ public class User {
 	}
 
 	public void addProfile(Serie serie) {
-
 		int i = profile.indexOf(serie);
-
 		if (profile.contains(serie)) {
 			profile.set(i, serie);
 		} else {
@@ -111,8 +103,4 @@ public class User {
 		return removeById(this.profile, id);
 	}
 	
-	public boolean removeWatchList(String id) {
-		return removeById(this.watchlist, id);
-	}
-
 }
